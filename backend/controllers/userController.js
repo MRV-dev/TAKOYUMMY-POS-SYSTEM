@@ -33,26 +33,21 @@ const getUser = async (req, res) => {
 const createUser = async (req, res) => {
     const { username, password } = req.body;
 
-    // Check if both username and password are provided
     if (!username || !password) {
         return res.status(400).json({ error: 'Username and password are required' });
     }
 
     try {
-        // Normalize username
         const normalizedUsername = username.trim().toLowerCase();
 
-        // Check if the username already exists
         const existingUser = await account.findOne({ username: normalizedUsername });
         if (existingUser) {
             return res.status(400).json({ error: 'Username already exists' });
         }
 
-        // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
         console.log(`Hashed password for ${normalizedUsername}: ${hashedPassword}`);
 
-        // Create and save the new user
         const user = await account.create({
             username: normalizedUsername,
             password: hashedPassword,
